@@ -27,4 +27,14 @@ export class EnrollmentsService {
       },
     });
   }
+
+  async findByCourseIdAndStudentId(courseId: string, studentId: string) {
+    return this.prisma.enrollment.findFirst({
+      where: {
+        courseId,
+        studentId,
+        canceledAt: null,
+      },
+    });
+  }
 }

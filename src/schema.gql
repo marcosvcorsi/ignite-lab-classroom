@@ -27,6 +27,7 @@ type Student {
 }
 
 type Query {
+  course(id: String!): Course!
   courses: [Course!]!
   me: Student!
   students: [Student!]!
