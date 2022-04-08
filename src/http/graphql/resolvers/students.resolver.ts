@@ -3,6 +3,7 @@ import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { EnrollmentsService } from '../../../services/enrollments.service';
 import { StudentsService } from '../../../services/students.service';
 import { AuthorizationGuard } from '../../auth/authorization.guard';
+import { AuthUser, CurrentUser } from '../../auth/current-user';
 import { Student } from '../schemas/student';
 
 @Resolver(() => Student)
@@ -11,6 +12,12 @@ export class StudentsResolver {
     private readonly studentsService: StudentsService,
     private readonly enrollmentsService: EnrollmentsService,
   ) {}
+
+  @UseGuards(AuthorizationGuard)
+  @Query(() => Student)
+  async me(@CurrentUser() user: AuthUser) {
+    return this.studentsService.findByAuthUserId(user.sub);
+  }
 
   @UseGuards(AuthorizationGuard)
   @Query(() => [Student])
