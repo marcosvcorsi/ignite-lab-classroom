@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 
+type CreateEnrollmentParams = {
+  courseId: string;
+  studentId: string;
+};
+
 @Injectable()
 export class EnrollmentsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -34,6 +39,24 @@ export class EnrollmentsService {
         courseId,
         studentId,
         canceledAt: null,
+      },
+    });
+  }
+
+  async create({ courseId, studentId }: CreateEnrollmentParams) {
+    const existingEnrollment = await this.findByCourseIdAndStudentId(
+      courseId,
+      studentId,
+    );
+
+    if (existingEnrollment) {
+      throw new Error('Enrollment already exists');
+    }
+
+    return this.prisma.enrollment.create({
+      data: {
+        courseId,
+        studentId,
       },
     });
   }
